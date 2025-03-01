@@ -1,0 +1,39 @@
+import React, { useRef, useEffect, forwardRef } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+// This wrapper component avoids using findDOMNode directly
+const QuillWrapper = forwardRef(({ value, onChange, modules, ...props }, ref) => {
+  const editorRef = useRef(null);
+  
+  useEffect(() => {
+    // Make editor reference available through the forwarded ref
+    if (ref) {
+      if (typeof ref === 'function') {
+        ref(editorRef.current);
+      } else {
+        ref.current = editorRef.current;
+      }
+    }
+  }, [ref]);
+  
+  return (
+    <div className="quill-wrapper">
+      <ReactQuill
+        ref={editorRef}
+        value={value}
+        onChange={onChange}
+        modules={modules || {
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link']
+          ]
+        }}
+        {...props}
+      />
+    </div>
+  );
+});
+
+export default QuillWrapper;
